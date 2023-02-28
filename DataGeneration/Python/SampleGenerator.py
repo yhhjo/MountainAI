@@ -8,6 +8,7 @@ from Parser import parse_tensor
 import Sample
 import Orogens
 import concurrent.futures
+import threading
 
 # Constants
 FNAME = "sample.in" 
@@ -16,10 +17,16 @@ CLOSURE_NAME = "TC"
 TEMPS = ["60", "120", "180", "240"]
 PATH_TO_TQTEC = "../Fortran/"
 
+# Create a lock object to synchronize access to the results list
+results_lock=threading.Lock()
+tmp_dir_lock = threading.Lock()
+
+
 def cleanup(i, names):
-    for f in names:
-        if os.path.exists(f):
-            os.remove(f)
+    with tmp_dir_lock:
+        for f in names:
+            if os.path.exists(f):
+                os.remove(f)
 
 # Multithreaded function that executes tqtec and rdtqtec, storing the temporary input and output files in 'tmp' before 
 # deleting them. 
@@ -57,16 +64,18 @@ def generate_models(n, chunk_size, orogen, output_dir, tmp_dir):
     if not os.path.exists(tmp_dir):
         os.mkdir(tmp_dir)
         
-    results = []
     for chunk in range(chunk_size):
+        results = []
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = [executor.submit(process_sample_thread, i, orogen, tmp_dir) for i in range(int(n/chunk_size))]
             for idx, future in enumerate(concurrent.futures.as_completed(futures)):
                 result = future.result()
                 if result:
-                    results.append(result)
+                    with results_lock:
+                        results.append(result)
         np.save(f"{output_dir}/results_CHUNK_{chunk}.npy", np.array(results, dtype=object))
-    return results
+        print(f"Progress: {chunk/chunk_size:.2f}%")
+    return
 
 # Returns chunks as a list of numpy arrays
 def read_chunk(file):
