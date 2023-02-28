@@ -1,0 +1,1 @@
+All files in the ```Fortran/``` directory are written by Dr. Kevin Patrick Furlong and shared personally. Compile the file ```tqtec.f90```  to ```tqtec``` and ```readtqtec.f90``` to ```tqtec``` in the ```Fortran/``` directory to use the scripts in ```Model/``` to generate batches of tectonic-thermal models.
