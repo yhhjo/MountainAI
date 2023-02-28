@@ -1,0 +1,11 @@
+*__pycache__/
+*.jpnyb_checkpoints
+*.npy
+*.pdf
+*.png
+DataGeneration/**/tqtec
+DataGeneration/**/rdtqtec
+DataGeneration/**/ftage.f90
+
+DataGeneration/**/Plotting*
+DataGeneration/**/.ipynb_checkpoints/**
