@@ -7,7 +7,7 @@ def main():
     parser = argparse.ArgumentParser(description='Generate geothermal and tectonic histories.')
     parser.add_argument('-n', type=int, help='number of samples')
     parser.add_argument('-c', type=int, help='chunk size')
-    parser.add_argument('-p', type=str, help='orogen')
+    parser.add_argument('-p', type=str, help=f'orogen {Orogens.OROGENS}')
     parser.add_argument('-o', type=str, help='output directory')
     parser.add_argument('-t', type=str, help='temporary directory')
 
