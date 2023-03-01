@@ -78,5 +78,9 @@ def generate_models(n, chunk_size, orogen, output_dir, tmp_dir):
     return
 
 # Returns chunks as a list of numpy arrays
-def read_chunk(file):
-    return np.load(file, allow_pickle=True)
+def merge_chunks(output_dir):
+    results = []
+    for chunk in os.listdir(output_dir):
+        c = np.load(output_dir+'/'+chunk, allow_pickle=True)
+        results.extend(c.tolist())
+    return results
