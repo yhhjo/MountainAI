@@ -1,6 +1,7 @@
 *__pycache__/
 *.jpnyb_checkpoints
 *.npy
+!Dataset/*.npy
 *.pdf
 *.png
 DataGeneration/**/tqtec
