@@ -40,7 +40,7 @@ def process_sample_thread(i, orogen, tmp_dir):
     tqtec = [PATH_TO_TQTEC+"tqtec", "-f", fname, "-o", outname]
     rdtqtec = [PATH_TO_TQTEC+"rdtqtec", outname, "-closure", closure_name, *TEMPS]
 
-    if (orogen=="CC"):
+    if (orogen==Orogens.CC):
         p = Orogens.Continental_Collision()
 
     s = Sample.Sample(p)

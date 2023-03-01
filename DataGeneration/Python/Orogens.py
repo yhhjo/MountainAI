@@ -19,6 +19,8 @@ CC_SURF_HF_MEAN = 100
 STD_SCALE = .1
 SURF_TEMP_MEAN = 5
 SURF_TEMP_STD = 5
+CC = "CC"
+OROGENS = [CC]
 
 # Sample model parameters with means specified in get_params
 class Continental_Collision():
