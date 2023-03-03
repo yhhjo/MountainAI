@@ -20,7 +20,7 @@ class PositionwiseFFN(nn.Module):
 
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Pass x through the PositionwiseFFN block  Input and output have a shape (d_model, d_ffn_hidden).
+        """Pass x through the PositionwiseFFN block.
         Parameters
         ----------
         x: 
