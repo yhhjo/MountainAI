@@ -4,12 +4,18 @@ import torch.nn.functional as F
 from DotProductAttention import DotProductAttention
 
 class MultiHeadAttention(nn.Module):
-    def __init__(self, d_model: int, h: int, dropout = 0) -> torch.Tensor:
-        """MHA block from Attention is All You Need, d2l.ai, and Cohen et. al (2022)
+    def __init__(self, d_model: int, q: int, v: int, h: int, dropout = 0) -> torch.Tensor:
+        """MHA block from Attention is All You Need, d2l.ai, and Cohen et. al (2022). 
+        Note: Parallelization is only possible if q = k = v = d_model/h.
+        
         Parameters
         ----------
         d_model:
             Dimension of model's latent space
+        q:
+            Query and key size
+        v:
+            value size
         h: 
             Number of heads
         """
@@ -19,10 +25,10 @@ class MultiHeadAttention(nn.Module):
         self._attention = DotProductAttention(dropout)
         
         # Query, key, value, and output weights
-        self._WQ = nn.Linear(d_model, d_model)
-        self._WK = nn.Linear(d_model, d_model)
-        self._WV = nn.Linear(d_model, d_model)
-        self._WO = nn.Linear(d_model, d_model)
+        self._WQ = nn.Linear(d_model, self._h*q)
+        self._WK = nn.Linear(d_model, self._h*q)
+        self._WV = nn.Linear(d_model, self._h*v)
+        self._WO = nn.Linear(self._h*v, d_model)
 
     def forward(self, q, k, v, mask: str) -> torch.Tensor:
         """Compute query, key, and value matrices to feed into scaled dot product attention. Matrices are divided into size
