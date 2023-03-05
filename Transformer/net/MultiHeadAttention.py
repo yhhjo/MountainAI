@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from DotProductAttention import DotProductAttention
 
 class MultiHeadAttention(nn.Module):
-    def __init__(self, d_model: int, h: int, dropout: int) -> torch.Tensor:
+    def __init__(self, d_model: int, h: int, dropout = 0) -> torch.Tensor:
         """MHA block from Attention is All You Need, d2l.ai, and Cohen et. al (2022)
         Parameters
         ----------
@@ -37,7 +37,7 @@ class MultiHeadAttention(nn.Module):
             Query tensor shape (batch_size, K, d_model)
         k:
             Key tensor shape (batch_size, K, d_model)
-        V:
+        v:
             Value tensor shape (batch_size, K, d_model)
 
         Returns
