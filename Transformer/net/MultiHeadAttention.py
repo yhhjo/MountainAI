@@ -30,7 +30,7 @@ class MultiHeadAttention(nn.Module):
         self._WV = nn.Linear(d_model, self._h*v)
         self._WO = nn.Linear(self._h*v, d_model)
 
-    def forward(self, q, k, v, mask: str) -> torch.Tensor:
+    def forward(self, q, k, v, mask = None) -> torch.Tensor:
         """Compute query, key, and value matrices to feed into scaled dot product attention. Matrices are divided into size
         (d_model/_h) along the batch dimension to allow parallel computation of multiple attention scores. 
         
@@ -45,6 +45,8 @@ class MultiHeadAttention(nn.Module):
             Key tensor shape (batch_size, K, d_model)
         v:
             Value tensor shape (batch_size, K, d_model)
+        mask:
+            None or "forward"
 
         Returns
         ----------

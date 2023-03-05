@@ -11,13 +11,13 @@ class PositionwiseFFN(nn.Module):
 
     """
 
-    def __init__(self, d_model: int, d_ffn_hidden=2048):
+    def __init__(self, d_model: int, d_ffn_hidden=2048, dropout=0):
         """Default hidden dimension is 2048"""
         super().__init__()
         self._linear1 = nn.Linear(d_model, d_ffn_hidden)
         self._relu = nn.ReLU()
         self._linear2 = nn.Linear(d_ffn_hidden, d_model)
-
+        self._dropout = nn.Dropout(dropout)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Pass x through the PositionwiseFFN block.
@@ -32,4 +32,5 @@ class PositionwiseFFN(nn.Module):
         """
         x = self._linear1(x)
         x = self._relu(x)
-        return self._linear2(x)
+        x = self._linear2(x)
+        return self._dropout(x)
