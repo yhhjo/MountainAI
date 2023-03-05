@@ -41,13 +41,22 @@ class DotProductAttention(nn.Module):
         K = q.shape[1]  # Sequence length
 
         dk = q.shape[1]**.5 
-        I = (q@k.transpose(1,2))
+        I = (q@k.transpose(1,2))/dk
 
         # Syntax from (Cohen et. al 2022)
+        """
+        By setting K to a fixed value, we can use a 2D tensor to represent the attention mask, 
+        where the element at position (i, j) represents the attention weight between the i-th and j-th tokens. 
+        If we want to mask out the attention from future tokens for the i-th token, 
+        we can simply set the values of the i-th row of the attention mask to -inf. 
+        This will ensure that the attention weights from the i-th token to all future tokens 
+        (i.e., those with an index greater than i) will be set to zero after applying the softmax function, 
+        effectively masking out these tokens. 
+        """
         if mask == MASKS.get("future"):
             future_mask = torch.triu(torch.ones((K, K)), diagonal=1).bool()
             I = I.masked_fill(future_mask, float('-inf'))
 
-        self._attention_weights = F.softmax(I/dk, dim=-1)
+        self._attention_weights = F.softmax(I, dim=-1)
         attention = self._dropout(self._attention_weights)@v
         return attention

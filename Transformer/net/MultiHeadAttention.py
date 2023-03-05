@@ -61,7 +61,7 @@ class MultiHeadAttention(nn.Module):
         # Save for visualization? 
         attention = self._attention(queries, keys, values, mask)
 
-        # Shape (batch_size, input_len, d_model)
+        # Concatenate all the heads
         attention = torch.cat(attention.chunk(self._h, dim=0), dim=-1)
 
         # One last linear transformation

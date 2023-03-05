@@ -61,7 +61,7 @@ class EncoderBlock(nn.Module):
             tensor of shape (batch_size, K, d_model)
         """
 
-        x = self._SelfAttention(q=x, k=x, v=x ) + x
+        x = self._SelfAttention(q=x, k=x, v=x) + x
         x = self._LayerNorm1(x)
         x = self._PFFN(x) + x
         x = self._LayerNorm2(x)
