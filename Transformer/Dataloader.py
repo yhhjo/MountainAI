@@ -5,10 +5,10 @@ def process_input(x)->np.array([]):
     """Takes input of shape H_thermal and concatenates the normalized vectors (age, AHe, Aft, ZHe, Zft)
     Output is shape d_input. 
     """
-    x = np.array([*x])
+    x = np.array([*x])[1:,:]
     std = np.std(x, axis=1, keepdims=True)
-    std[std==0] = .0001
-    x = ((x - np.mean(x, axis=1, keepdims=True)) / std).flatten() # Normalize
+    std[std==0] = .00001
+    x = ((x - np.mean(x, axis=1, keepdims=True)) / std).T
     return x
 
 def process_output(y: Sample, d_output: int) -> np.array([]):

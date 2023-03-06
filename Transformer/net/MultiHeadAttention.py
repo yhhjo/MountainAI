@@ -58,7 +58,7 @@ class MultiHeadAttention(nn.Module):
         keys = torch.cat(self._WK(k).chunk(self._h, dim=-1), dim=0)
         values = torch.cat(self._WV(v).chunk(self._h, dim=-1), dim=0)
 
-        # Save for visualization? 
+        # Save for visualization?
         attention = self._attention(queries, keys, values, mask)
 
         # Concatenate all the heads
