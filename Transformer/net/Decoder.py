@@ -41,7 +41,7 @@ class DecoderBlock(nn.Module):
         self._layerNorm1 = nn.LayerNorm(d_model)
         self._encoderDecoderAttention = MultiHeadAttention(d_model, q, v, h, dropout)
         self._layerNorm2 = nn.LayerNorm(d_model)
-        self._PFFN = PositionwiseFFN(d_model, dropout=dropout)
+        self._PFFN = PositionwiseFFN(d_model, d_ffn_hidden=256, dropout=dropout)
         self._layerNorm3 = nn.LayerNorm(d_model)
 
     def forward(self, x: torch.Tensor, context: torch.Tensor) -> torch.Tensor:

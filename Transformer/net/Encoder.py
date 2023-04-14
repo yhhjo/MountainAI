@@ -45,7 +45,7 @@ class EncoderBlock(nn.Module):
 
         self._SelfAttention = MultiHeadAttention(d_model, q, v, h, dropout)
         self._LayerNorm1 = nn.LayerNorm(d_model)
-        self._PFFN = PositionwiseFFN(d_model, d_ffn_hidden=2048, dropout=dropout)
+        self._PFFN = PositionwiseFFN(d_model, d_ffn_hidden=256, dropout=dropout)
         self._LayerNorm2 = nn.LayerNorm(d_model)
 
 

@@ -12,10 +12,10 @@ class DotProductAttention(nn.Module):
     Parameters
     ----------
     dropout:
-        dropout rate, default = 0.1
+        dropout rate, default = 0.2
     
     """
-    def __init__(self, dropout=0):
+    def __init__(self, dropout=0.2):
         """Dropout rate"""
         super().__init__()
         self._dropout = nn.Dropout(dropout)
