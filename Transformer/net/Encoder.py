@@ -45,9 +45,10 @@ class EncoderBlock(nn.Module):
 
         self._SelfAttention = MultiHeadAttention(d_model, q, v, h, dropout)
         self._LayerNorm1 = nn.LayerNorm(d_model)
-        self._PFFN = PositionwiseFFN(d_model, d_ffn_hidden=256, dropout=dropout)
+        self._PFFN = PositionwiseFFN(d_model, d_ffn_hidden=1024, dropout=dropout)
         self._LayerNorm2 = nn.LayerNorm(d_model)
 
+        self._dropout = nn.Dropout(dropout)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """ Propogate through Encoder Block. 
@@ -61,8 +62,13 @@ class EncoderBlock(nn.Module):
             tensor of shape (batch_size, K, d_model)
         """
 
-        x = self._SelfAttention(q=x, k=x, v=x) + x
+        residual = x
+        x = self._SelfAttention(q=x, k=x, v=x)
+        x = self._dropout(x) + residual
         x = self._LayerNorm1(x)
-        x = self._PFFN(x) + x
+
+        residual = x
+        x = self._PFFN(x)
+        x = self._dropout(x) + residual
         x = self._LayerNorm2(x)
         return x

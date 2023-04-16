@@ -41,8 +41,10 @@ class DecoderBlock(nn.Module):
         self._layerNorm1 = nn.LayerNorm(d_model)
         self._encoderDecoderAttention = MultiHeadAttention(d_model, q, v, h, dropout)
         self._layerNorm2 = nn.LayerNorm(d_model)
-        self._PFFN = PositionwiseFFN(d_model, d_ffn_hidden=256, dropout=dropout)
+        self._PFFN = PositionwiseFFN(d_model, d_ffn_hidden=1024, dropout=dropout)
         self._layerNorm3 = nn.LayerNorm(d_model)
+        
+        self._dropout = nn.Dropout(dropout)
 
     def forward(self, x: torch.Tensor, context: torch.Tensor) -> torch.Tensor:
         """
@@ -59,10 +61,18 @@ class DecoderBlock(nn.Module):
         """
         mask = MASKS.get("future")
 
-        x = self._selfAttention(q=x, k=x, v=x, mask=mask) + x 
-        x = self._layerNorm1(x)
-        x = self._encoderDecoderAttention(q=x, k=context, v=context) + x
+        residual = x 
+        x = self._selfAttention(q=x, k=x, v=x, mask=mask)
+        x = self._dropout(x)
+        x = self._layerNorm1(x+ residual)
+
+        residual = x
+        x = self._encoderDecoderAttention(q=x, k=context, v=context)
+        x = self._dropout(x) + residual
         x = self._layerNorm2(x)
-        x = self._PFFN(x) + x
+
+        residual = x
+        x = self._PFFN(x)
+        x = self._dropout(x) + residual
         x = self._layerNorm3(x)
         return x
