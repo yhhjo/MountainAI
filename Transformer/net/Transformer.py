@@ -2,10 +2,11 @@ import torch
 import torch.nn as nn
 from Encoder import EncoderBlock
 from Decoder import DecoderBlock
+from PositionalEncoding import PositionalEncoding
 
 class Transformer(nn.Module):
 
-    def __init__(self, d_input: int, seqlen: int, d_output: int, d_model: int, q: int, v: int, h: int, Ne: int, Nd: int, batch_size: int, dropout = 0.1, noise_scale = 0):
+    def __init__(self, d_input: int, seqlen: int, d_output: int, d_model: int, q: int, v: int, h: int, Ne: int, Nd: int, dropout = 0.1, noise_scale = 0):
         """Transformer Model from Attention is All You Need, d2l.ai, and Cohen et. all 2022. 
         The transformer consists of an embedding layer, a stack of N encoding blocks, a stack of N decoding blocks,
         followed by a linear transformation and an activation function, 
@@ -14,6 +15,8 @@ class Transformer(nn.Module):
         ----------
         d_input: 
             Dimension of input vector
+        seqlen: 
+            Input/output sequence length
         d_output:
             Dimension output
         d_model:
@@ -34,15 +37,17 @@ class Transformer(nn.Module):
 
         super().__init__()
         
-        self._batch_size = batch_size
+        self._noise_scale = noise_scale
+        
+        self._embeddingLayer = nn.Linear(d_input, d_model)
+        self._positionalEncoding = PositionalEncoding(d_model, dropout, seqlen)
         self._encodingStack = []
         self._decodingStack = []
-        self._embeddingLayer = nn.Linear(d_input, d_model)
+
         self._out1 = nn.Linear(d_model, d_output)
         self._relu = nn.ReLU()
         self._out2 = nn.Linear(d_output, d_output)
         self._dropout = nn.Dropout(dropout)
-        self._noise_scale = noise_scale
 
         for i in range(Ne):
             self._encodingStack.append(EncoderBlock(d_model, q, v, h, dropout))
@@ -61,7 +66,7 @@ class Transformer(nn.Module):
         Parameters: 
         ----------
         x:
-            Tensor of shape (batch_size, seqlen, d_output)
+            Tensor of shape (batch_size, seqlen, d_input)
 
         Returns
         ----------
@@ -69,6 +74,7 @@ class Transformer(nn.Module):
             Tensor shape (batch_size, d_output)
         """
         x = self._embeddingLayer(x)
+        x = self._positionalEncoding(x)
 
         for e in self._encodingStack:
             x = e(x)
@@ -83,7 +89,7 @@ class Transformer(nn.Module):
         x = x.mean(dim=1)  # Global mean pooling along the `seqlen` dimension
         x = self._out1(x)
         x = self._dropout(x)
-        x = self._relu(x)
         x = self._out2(x)
+        x = self._relu(x)
         x = x + torch.randn_like(x) * self._noise_scale
         return x
