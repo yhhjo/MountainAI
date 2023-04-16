@@ -11,7 +11,7 @@ class PositionwiseFFN(nn.Module):
 
     """
 
-    def __init__(self, d_model: int, d_ffn_hidden=256, dropout=0):
+    def __init__(self, d_model: int, d_ffn_hidden=2048, dropout=0):
         """Default hidden dimension is 2048"""
         super().__init__()
         self._linear1 = nn.Linear(d_model, d_ffn_hidden)
